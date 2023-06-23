@@ -33,13 +33,13 @@ def process_song_data(spark, input_data, output_data):
     df = spark.read.json(song_data)
 
     # Extract columns to create songs table
-    songs_table = df.select("song_id", "title", "artist_id", "year", "duration")
+    songs_table = df.select("song_id", "title", "artist_id", "year", "duration").distinct()
 
     # Write songs table to parquet files partitioned by year and artist
     songs_table.write.partitionBy("year", "artist_id").parquet(output_data + "songs.parquet")
 
     # Extract columns to create artists table
-    artists_table = df.select("artist_id", "artist_name", "artist_location", "artist_latitude", "artist_longitude")
+    artists_table = df.select("artist_id", "artist_name", "artist_location", "artist_latitude", "artist_longitude").distinct()
 
     # Write artists table to parquet files
     artists_table.write.parquet(output_data + "artists.parquet")
@@ -72,13 +72,13 @@ def process_log_data(spark, input_data, output_data):
     df_songs_recent = df_recent.filter(df_recent.Timestamp == df_recent.last_order_time)
 
     # Extract columns for users table
-    users_table = df_songs_recent.select("userId", "firstName", "lastName", "gender", "level")
+    users_table = df_songs_recent.select("userId", "firstName", "lastName", "gender", "level").distinct()
 
     # Write users table to parquet files
     users_table.write.parquet(output_data + "users.parquet")
 
     # Extract columns to create time table
-    time_table = df.select('Timestamp')
+    time_table = df.select('Timestamp').distinct()
     time_table = time_table.withColumn('hour', F.hour('Timestamp'))
     time_table = time_table.withColumn('day', F.dayofmonth('Timestamp'))
     time_table = time_table.withColumn('weekofyear', F.weekofyear('Timestamp'))
@@ -100,7 +100,7 @@ def process_log_data(spark, input_data, output_data):
     # Extract columns from joined song and log datasets to create songplays table
     songplays_table = df.join(song_df, on='song', how='left')
     songplays_table = songplays_table.select("Timestamp", "userId", "level", "song_id", "artist_id", "sessionId",
-                                             "location", "userAgent")
+                                             "location", "userAgent").distinct()
     songplays_table = songplays_table.withColumn('year', F.year('Timestamp'))
     songplays_table = songplays_table.withColumn('month', F.month('Timestamp'))
 
