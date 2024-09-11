@@ -36,7 +36,7 @@ Startup Sparkify has its new music streaming app running for months. In order to
 
 The schema has one measure table songplays and four dimension table time, user, songs and artists. Please see the ERD below to check the details.
 
-![ERD](/assets/Data Model.png "ERD")
+![ERD](assets/Data_Model.png "ERD")
 
 
 ## Maintainer
